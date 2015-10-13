@@ -1,9 +1,22 @@
 <?php
-namespace taptodo;
+namespace LEETDOTCC;
 
 use pocketmine\utils\Config;
 
-class ConfigUpdater{
+class ConfigUpdater
+{
+    /*
+
+         _|        _|_|_|_|  _|_|_|_|  _|_|_|_|_|       _|_|_|    _|_|_|
+         _|        _|        _|            _|         _|        _|
+         _|        _|_|_|    _|_|_|        _|         _|        _|
+         _|        _|        _|            _|         _|        _|
+         _|_|_|_|  _|_|_|_|  _|_|_|_|      _|     _|    _|_|_|    _|_|_|
+
+         Original TapToDo plugin by Falkirks, Modified for LEET.CC by 64FF00
+
+    */
+
     /** @var Config  */
     private $config;
     /** @var TapToDo  */

@@ -1,30 +1,56 @@
 <?php
-namespace taptodo;
+namespace LEETDOTCC;
+
 use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
 use pocketmine\command\CommandSender;
+
 use pocketmine\event\level\LevelLoadEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
+
 use pocketmine\level\Position;
+
 use pocketmine\Player;
+
 use pocketmine\plugin\PluginBase;
+
 use pocketmine\utils\Config;
 
-class TapToDo extends PluginBase implements CommandExecutor, Listener{
+class TapToDo extends PluginBase implements CommandExecutor, Listener
+{
+    /*
+
+         _|        _|_|_|_|  _|_|_|_|  _|_|_|_|_|       _|_|_|    _|_|_|
+         _|        _|        _|            _|         _|        _|
+         _|        _|_|_|    _|_|_|        _|         _|        _|
+         _|        _|        _|            _|         _|        _|
+         _|_|_|_|  _|_|_|_|  _|_|_|_|      _|     _|    _|_|_|    _|_|_|
+
+         Original TapToDo plugin by Falkirks, Modified for LEET.CC by 64FF00
+
+    */
+
+    // TODO: Change command structure
+    // TODO: - /action: Please write your command into chat, other players won't be able to see it!
+    // TODO: - Use %player% to replace with the player name
+    // TODO: - /actionDelAll: Remove all actions assigned to the block
+
     public $sessions;
     /** @var  Block[] */
     public $blocks;
     /** @var  Config */
     private $blocksConfig;
+
     public function onEnable(){
         $this->sessions = [];
         $this->blocks = [];
         $this->saveResource("blocks.yml");
-        $this->blocksConfig = (new ConfigUpdater(new Config($this->getDataFolder() . "blocks.yml", Config::YAML, array()), $this))->checkConfig();
+        $this->blocksConfig = (new ConfigUpdater(new Config($this->getDataFolder() . "blocks.yml", Config::YAML, []), $this))->checkConfig();
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->parseBlockData();
     }
+
     public function onCommand(CommandSender $sender, Command $cmd, $label, array $args){
         if($cmd->getName() == "tr"){
             if(isset($args[1])){

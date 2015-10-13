@@ -1,11 +1,23 @@
 <?php
-namespace taptodo;
-
+namespace LEETDOTCC;
 
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\Player;
 
-class Command {
+class Command
+{
+    /*
+
+         _|        _|_|_|_|  _|_|_|_|  _|_|_|_|_|       _|_|_|    _|_|_|
+         _|        _|        _|            _|         _|        _|
+         _|        _|_|_|    _|_|_|        _|         _|        _|
+         _|        _|        _|            _|         _|        _|
+         _|_|_|_|  _|_|_|_|  _|_|_|_|      _|     _|    _|_|_|    _|_|_|
+
+         Original TapToDo plugin by Falkirks, Modified for LEET.CC by 64FF00
+
+    */
+
     const AS_CONSOLE_TYPE = 0;
     const AS_PLAYER_TYPE = 1;
     const AS_OP_TYPE = 2;

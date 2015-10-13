@@ -1,7 +1,7 @@
-name: TapToDo
-main: taptodo\TapToDo
+name: TapToDo-LEET.CC
+main: LEETDOTCC\TapToDo
 version: 2.2.1
-author: Falk
+authors: [Falk, 64FF00]
 api: [1.0.0]
 load: POSTWORLD
 commands:

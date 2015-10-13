@@ -1,10 +1,23 @@
 <?php
-namespace taptodo;
+namespace LEETDOTCC;
 
 use pocketmine\level\Position;
 use pocketmine\Player;
 
-class Block{
+class Block
+{
+    /*
+
+         _|        _|_|_|_|  _|_|_|_|  _|_|_|_|_|       _|_|_|    _|_|_|
+         _|        _|        _|            _|         _|        _|
+         _|        _|_|_|    _|_|_|        _|         _|        _|
+         _|        _|        _|            _|         _|        _|
+         _|_|_|_|  _|_|_|_|  _|_|_|_|      _|     _|    _|_|_|    _|_|_|
+
+         Original TapToDo plugin by Falkirks, Modified for LEET.CC by 64FF00
+
+    */
+
     /** @var  Command[] */
     private $commands;
     /** @var  Position */
