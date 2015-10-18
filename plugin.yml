@@ -6,13 +6,22 @@ api: [1.0.0]
 load: POSTWORLD
 commands:
   action:
-    permission: ttdleet.command
+    permission: ttdleet.command.action
     description: Adds a new command to a block
     usage: /action
+  actionDelAll:
+    permission: ttdleet.command.actionDelAll
+    description: Adds a new command to a block
+    usage: /action  
 permissions:
   ttdleet:
     default: op
     children:
-      ttdleet.command: []
+      ttdleet.command:
+        children:
+          ttdleet.command.action:
+            default: op
+          ttdleet.command.actionDelAll:
+            default: op  
       ttdleet.tap:
-      default: true
+        default: true

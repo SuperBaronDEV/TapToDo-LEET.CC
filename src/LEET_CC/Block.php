@@ -119,6 +119,7 @@ class Block
     {
         return $this->position;
     }
+
     public function toArray()
     {
         $arr = [

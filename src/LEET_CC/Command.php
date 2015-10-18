@@ -72,7 +72,7 @@ class Command
 
         if($type === Command::AS_OP_TYPE && $player->isOp()) $type = Command::AS_PLAYER_TYPE;
 
-        switch ($type)
+        switch($type)
         {
             case Command::AS_CONSOLE_TYPE:
 

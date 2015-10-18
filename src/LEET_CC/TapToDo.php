@@ -7,9 +7,12 @@ use pocketmine\command\CommandSender;
 
 use pocketmine\event\level\LevelLoadEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 
 use pocketmine\level\Position;
+
+use pocketmine\Player;
 
 use pocketmine\plugin\PluginBase;
 
@@ -29,7 +32,7 @@ class TapToDo extends PluginBase implements CommandExecutor, Listener
 
     */
 
-    public $sessions;
+    public $cmdSessions = [], $normalSessions = [];
     /** @var  Block[] */
     public $blocks;
     /** @var  Config */
@@ -37,8 +40,6 @@ class TapToDo extends PluginBase implements CommandExecutor, Listener
 
     public function onEnable()
     {
-        $this->sessions = [];
-
         $this->blocks = [];
 
         $this->saveDefaultConfig();
@@ -57,143 +58,63 @@ class TapToDo extends PluginBase implements CommandExecutor, Listener
         // TODO: - Use %player% to replace with the player name
         // TODO: - /actionDelAll: Remove all actions assigned to the block
 
+        switch(strtolower($cmd->getName()))
+        {
+            case "action":
+
+                if(!$sender instanceof Player)
+                {
+                    $sender->sendMessage("This command should not be run on console.");
+
+                    return true;
+                }
+
+                $sender->sendMessage("Please write your command into chat, other players won't be able to see it!");
+
+                $this->cmdSessions[$sender->getName()] = true;
+
+                break;
+
+            case "actionDelAll":
+
+                break;
+
+            default:
+
+                break;
+        }
+
         return true;
     }
 
     public function onInteract(PlayerInteractEvent $event)
     {
-        if(isset($this->sessions[$event->getPlayer()->getName()]))
-        {
-            $args = $this->sessions[$event->getPlayer()->getName()];
-
-            switch($args[0])
-            {
-                case "add":
-
-                    if(isset($args[1]))
-                    {
-                        if(($b = $this->getBlock($event->getBlock(), null, null, null)) instanceof Block)
-                        {
-                            array_shift($args);
-
-                            $b->addCommand(implode(" ", $args));
-
-                            $event->getPlayer()->sendMessage("Command added.");
-                        }
-                        else
-                        {
-                            array_shift($args);
-
-                            $this->addBlock($event->getBlock(), implode(" ", $args));
-
-                            $event->getPlayer()->sendMessage("Command added.");
-                        }
-                    }
-                    else
-                    {
-                        $event->getPlayer()->sendMessage("You must specify a command.");
-                    }
-
-                    break;
-
-                case "del":
-
-                    if(isset($args[1]))
-                    {
-                        if(($b = $this->getBlock($event->getBlock(), null, null, null)) instanceof Block)
-                        {
-                            array_shift($args);
-
-                            if(($b->deleteCommand(implode(" ", $args))) !== false)
-                            {
-                                $event->getPlayer()->sendMessage("Command removed.");
-                            }
-                            else
-                            {
-                                $event->getPlayer()->sendMessage("Couldn't find command.");
-                            }
-
-                        }
-                        else
-                        {
-                            $event->getPlayer()->sendMessage("Block does not exist.");
-                        }
-                    }
-                    else
-                    {
-                        $event->getPlayer()->sendMessage("You must specify a command.");
-                    }
-
-                    break;
-
-                case "delall":
-
-                    if(($b = $this->getBlock($event->getBlock(), null, null, null)) instanceof Block)
-                    {
-                        $this->deleteBlock($b);
-
-                        $event->getPlayer()->sendMessage("Block deleted.");
-                    }
-                    else
-                    {
-                        $event->getPlayer()->sendMessage("Block doesn't exist.");
-                    }
-
-                    break;
-
-                case "name":
-                    if(isset($args[1]))
-                    {
-                        if(($b = $this->getBlock($event->getBlock(), null, null, null)) instanceof Block)
-                        {
-                            $b->setName($args[1]);
-
-                            $event->getPlayer()->sendMessage("Block named.");
-                        }
-                        else
-                        {
-                            $event->getPlayer()->sendMessage("Block doesn't exist.");
-                        }
-                    }
-                    else
-                    {
-                        $event->getPlayer()->sendMessage("You need to specify a name.");
-                    }
-
-                    break;
-
-                case "list":
-
-                    if(($b = $this->getBlock($event->getBlock(), null, null, null)) instanceof Block)
-                    {
-                        foreach($b->getCommands() as $cmd)
-                        {
-                            $event->getPlayer()->sendMessage($cmd);
-                        }
-                    }
-                    else
-                    {
-                        $event->getPlayer()->sendMessage("Block doesn't exist.");
-                    }
-
-                    break;
-            }
-
-            unset($this->sessions[$event->getPlayer()->getName()]);
-        }
-        else
-        {
-            if(($b = $this->getBlock($event->getBlock(), null, null, null)) instanceof Block && $event->getPlayer()->hasPermission("taptodo.tap"))
-            {
-                $b->executeCommands($event->getPlayer());
-            }
-        }
+        // TODO: ...
     }
+
     public function onLevelLoad(LevelLoadEvent $event)
     {
         $this->getLogger()->info("Reloading blocks due to level " . $event->getLevel()->getName() . " loaded...");
 
         $this->parseBlockData();
+    }
+
+    public function onPlayerCommand(PlayerCommandPreprocessEvent $event)
+    {
+        $player = $event->getPlayer();
+
+        if(isset($this->cmdSessions[$event->getPlayer()->getName()]))
+        {
+            $command = $event->getMessage();
+
+            // TODO: ...
+
+            $player->sendMessage("Added a new command to the block.");
+
+            $event->setCancelled();
+        }
+
+        unset($this->cmdSessions[$event->getPlayer()->getName()]);
     }
 
     /**
