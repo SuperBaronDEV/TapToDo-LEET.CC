@@ -108,6 +108,8 @@ class TapToDo extends PluginBase implements CommandExecutor, Listener
             if($this->normalSessions[$player->getName()] === 'action')
             {
                 $player->sendMessage("Please write your command into chat (with a slash!), other players won't be able to see it!");
+                $player->sendMessage("Execution Mode Tags: %pow, %op");
+                $player->sendMessage("Special Tags: %p, %x, %y, %z, %l, %ip, %n");
 
                 $this->normalSessions[$player->getName()] = $block;
 
