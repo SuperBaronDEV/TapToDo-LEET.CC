@@ -11,8 +11,8 @@ commands:
     usage: /action
   actionDelAll:
     permission: ttdleet.command.actionDelAll
-    description: Adds a new command to a block
-    usage: /action  
+    description: Removes all actions assigned to the block
+    usage: /actionDelAll
 permissions:
   ttdleet:
     default: op

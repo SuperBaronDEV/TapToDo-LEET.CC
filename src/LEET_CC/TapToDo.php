@@ -69,13 +69,24 @@ class TapToDo extends PluginBase implements CommandExecutor, Listener
                     return true;
                 }
 
-                $sender->sendMessage("Please write your command into chat, other players won't be able to see it!");
+                $sender->sendMessage("Please tap a block to assign your command.");
 
-                $this->cmdSessions[$sender->getName()] = true;
+                $this->normalSessions[$sender->getName()] = 'action';
 
                 break;
 
-            case "actionDelAll":
+            case "actiondelall":
+
+                if(!$sender instanceof Player)
+                {
+                    $sender->sendMessage("This command should not be run on console.");
+
+                    return true;
+                }
+
+                $sender->sendMessage("Select the target block to continue.");
+
+                $this->normalSessions[$sender->getName()] = 'actionDelAll';
 
                 break;
 
@@ -89,7 +100,40 @@ class TapToDo extends PluginBase implements CommandExecutor, Listener
 
     public function onInteract(PlayerInteractEvent $event)
     {
-        // TODO: ...
+        $block = $event->getBlock();
+        $player = $event->getPlayer();
+
+        if(isset($this->normalSessions[$player->getName()]))
+        {
+            if($this->normalSessions[$player->getName()] === 'action')
+            {
+                $player->sendMessage("Please write your command into chat (with a slash!), other players won't be able to see it!");
+
+                $this->normalSessions[$player->getName()] = $block;
+
+                $this->cmdSessions[$player->getName()] = false;
+            }
+            else
+            {
+                if(($tempBlock = $this->getBlock($block, null, null, null)) instanceof Block)
+                {
+                    $this->deleteBlock($tempBlock);
+
+                    $player->sendMessage("Removed all actions assigned to the block.");
+
+                    unset($this->normalSessions[$player->getName()]);
+                }
+                else
+                {
+                    $player->sendMessage("Error: Block doesn't exist.");
+                }
+            }
+        }
+
+        if(!isset($this->normalSessions[$player->getName()]) && ($block = $this->getBlock($event->getBlock(), null, null, null)) instanceof Block && $event->getPlayer()->hasPermission("taptodo.tap"))
+        {
+            $block->executeCommands($event->getPlayer());
+        }
     }
 
     public function onLevelLoad(LevelLoadEvent $event)
@@ -103,13 +147,29 @@ class TapToDo extends PluginBase implements CommandExecutor, Listener
     {
         $player = $event->getPlayer();
 
-        if(isset($this->cmdSessions[$event->getPlayer()->getName()]))
+        if(isset($this->normalSessions[$player->getName()]))
         {
-            $command = $event->getMessage();
+            $event->setCancelled();
+        }
 
-            // TODO: ...
+        if(isset($this->cmdSessions[$player->getName()]))
+        {
+            $block = $this->normalSessions[$player->getName()];
+            $command = substr($event->getMessage(), 1);
+
+            if(($tempBlock = $this->getBlock($block, null, null, null)) instanceof Block)
+            {
+                $tempBlock->addCommand($command);
+            }
+            else
+            {
+                $this->addBlock($block, $command);
+            }
 
             $player->sendMessage("Added a new command to the block.");
+
+            unset($this->cmdSessions[$player->getName()]);
+            unset($this->normalSessions[$player->getName()]);
 
             $event->setCancelled();
         }
@@ -190,7 +250,8 @@ class TapToDo extends PluginBase implements CommandExecutor, Listener
      */
     public function addBlock(Position $p, $cmd)
     {
-        $block = new Block(new Position($p->getX(), $p->getY(), $p->getZ(), $p->getLevel()), [$cmd], $this, count($this->blocksConfig->get("blocks")));
+        $block = new Block(new Position($p->getX(), $p->getY(), $p->getZ(), $p->getLevel()), [$cmd], $this, count($this->config->get("blocks")));
+
         $this->saveBlock($block);
 
         $this->config->save();
