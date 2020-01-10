@@ -1,7 +1,7 @@
 name: TapToDo-LEET.CC
 main: LEET_CC\TapToDo
 version: 1.0.0
-authors: [Falk, 64FF00]
+authors: [Falk, 64FF00, SuperBaronDEV]
 api: [1.0.0]
 load: POSTWORLD
 commands:
